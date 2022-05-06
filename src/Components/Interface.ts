@@ -1,7 +1,8 @@
 export {}
 
 export interface mainState {
-    hrefLink: string
+    hrefLink: string,
+    token: string
 }
 
 export interface mainProps{
