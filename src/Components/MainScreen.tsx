@@ -10,7 +10,8 @@ export default class MainScreen extends Component<mainProps, mainState> {
         super(props);
         this.state = {
             hrefLink: `${Ids.AUTH_ENDPOINT}?client_id=${Ids.CLIENT_ID}&redirect_uri=${Ids.REDIRECT_URL}&response_type=${Ids.RESPONSE_TYPE}`,
-            token: ""
+            token: "",
+            artistCount: {}
         };
     }
 
@@ -41,34 +42,57 @@ export default class MainScreen extends Component<mainProps, mainState> {
         window.localStorage.clear();
     };
 
-    getArtistByName = (values: any) => {
-        Object.keys(values).forEach((val: any) => {
-            console.log(val);
-        });
-    };
-
     showArtists = async () => {
-        const playlistId = "7syp2DaAeVmTsnh2atrBTP";
+        const playlistId = Ids.PLAYLIST_ID; //personal playlist id!
         const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
 
-        const data = await axios.get(url, {
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${this.state.token}`
+                },
+                params: {
+                    fields: "items(track(name, artists(name, uri)))"
+                }
+            });
+
+            const value = response.data.items;
+
+            Object.keys(value).forEach((val: string) => {
+                // this.getArtistByName(value[val]);
+                let aritstName = value[val].track.artists;
+                aritstName.map((names: any) => {
+                    let uri = names.uri.split(":")[2];
+                    if (names.name in this.state.artistCount) {
+                        this.state.artistCount[names.name][0] += 1;
+                        this.state.artistCount[names.name][1] = uri;
+                    } else {
+                        this.state.artistCount[names.name] = [];
+                        this.state.artistCount[names.name][0] = 1;
+                        this.state.artistCount[names.name][1] = uri;
+                    }
+                });
+            });
+
+            Object.keys(this.state.artistCount).map((value: any) => {
+                this.getArtistsImage(this.state.artistCount[value][1]);
+            });
+        } catch (err) {
+            console.log("err", err);
+            alert("Session expired! Plese logout and login again");
+        }
+    };
+
+    getArtistsImage = async (uri: string) => {
+        const url = `https://api.spotify.com/v1/artists/${uri}`;
+
+        const data: any = await axios.get(url, {
             headers: {
                 Authorization: `Bearer ${this.state.token}`
-            },
-            params: {
-                fields: "items(track(name, artists(name)))"
             }
         });
 
-        let value = data.data.items;
-
-        Object.keys(value).forEach((val: string) => {
-            // this.getArtistByName(value[val]);
-            let aritstName = value[val].track.artists;
-            aritstName.map((names: string) => {
-                console.log(names);
-            });
-        });
+        console.log(data.data.name);
     };
 
     render() {
