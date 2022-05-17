@@ -9,3 +9,11 @@ export interface mainState {
 export interface mainProps{
     
 }
+
+export interface artistCardProp{
+    artist: any
+}
+
+export interface artistCardState{
+    storeArtist: any
+}

@@ -4,9 +4,10 @@ import { Ids } from "../Constants/APIData";
 import { mainProps, mainState } from "./Interface";
 import axios from "axios";
 import "../index.css";
+import ArtistCard from "./ArtistCard";
 
 export default class MainScreen extends Component<mainProps, mainState> {
-    constructor(props: any) {
+    constructor(props: mainProps) {
         super(props);
         this.state = {
             hrefLink: `${Ids.AUTH_ENDPOINT}?client_id=${Ids.CLIENT_ID}&redirect_uri=${Ids.REDIRECT_URL}&response_type=${Ids.RESPONSE_TYPE}`,
@@ -75,56 +76,78 @@ export default class MainScreen extends Component<mainProps, mainState> {
             });
 
             Object.keys(this.state.artistCount).map((value: any) => {
-                this.getArtistsImage(this.state.artistCount[value][1]);
+                this.getArtistsImage(this.state.artistCount[value][1], value);
             });
         } catch (err) {
             console.log("err", err);
             alert("Session expired! Plese logout and login again");
         }
+        // console.log(this.state.artistCount);
     };
 
-    getArtistsImage = async (uri: string) => {
+    getArtistsImage = async (uri: string, value: any) => {
         const url = `https://api.spotify.com/v1/artists/${uri}`;
 
-        const data: any = await axios.get(url, {
+        const response: any = await axios.get(url, {
             headers: {
                 Authorization: `Bearer ${this.state.token}`
             }
         });
 
-        console.log(data.data.name);
+        let names = response.data.name;
+        console.log("1st call", value);
+        console.log("2nd call", names);
+        console.log("Thank you, next");
+        // console.log("Names", names);
+
+        Object.keys(this.state.artistCount).forEach((value: any, index: number) => {
+            if (value === names) {
+                let arr = this.state.artistCount[value];
+                let image = response.data.images;
+                arr[1] = image[1].url;
+            }
+        });
+
+        console.log(this.state.artistCount);
     };
 
     render() {
         return (
-            <div
-                className="d-flex align-items-center justify-content-center"
-                style={{ height: "100vh" }}
-            >
-                <div className="borderMain text-center rounded border-success mb-5 ">
-                    <div style={{ marginTop: "8.5%" }}>
-                        <div className="mt-4 h5">Spotify Statistics</div>
-                        <p>
-                            <small className="text-muted">
-                                Please login with your Spotify account to see the statistics
-                            </small>
-                        </p>
+            <>
+                <div
+                    className="d-flex align-items-center justify-content-center"
+                    style={{ height: "100vh" }}
+                >
+                    <div className="borderMain text-center rounded border-success mb-5 ">
+                        <div style={{ marginTop: "8.5%" }}>
+                            <div className="mt-4 h5">Spotify Statistics</div>
+                            <p>
+                                <small className="text-muted">
+                                    Please login with your Spotify account to see the statistics
+                                </small>
+                            </p>
 
-                        {!this.state.token ? (
-                            <Button variant="success" className="mt-4" href={this.state.hrefLink}>
-                                Login with Spotify
-                            </Button>
-                        ) : (
-                            <div className="d-flex flex-column justify-content-center align-items-center mt-1">
-                                <Button onClick={this.showArtists}>Show Artists</Button>
-                                <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
-                                    Log out
+                            {!this.state.token ? (
+                                <Button
+                                    variant="success"
+                                    className="mt-4"
+                                    href={this.state.hrefLink}
+                                >
+                                    Login with Spotify
                                 </Button>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="d-flex flex-column justify-content-center align-items-center mt-1">
+                                    <Button onClick={this.showArtists}>Show Artists</Button>
+                                    <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
+                                        Log out
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
+                <ArtistCard artist={this.state.artistCount} />
+            </>
         );
     }
 }
