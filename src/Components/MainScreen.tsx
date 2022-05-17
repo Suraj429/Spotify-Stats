@@ -12,7 +12,8 @@ export default class MainScreen extends Component<mainProps, mainState> {
         this.state = {
             hrefLink: `${Ids.AUTH_ENDPOINT}?client_id=${Ids.CLIENT_ID}&redirect_uri=${Ids.REDIRECT_URL}&response_type=${Ids.RESPONSE_TYPE}`,
             token: "",
-            artistCount: {}
+            artistCount: {},
+            showCard: false
         };
     }
 
@@ -82,7 +83,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
             console.log("err", err);
             alert("Session expired! Plese logout and login again");
         }
-        // console.log(this.state.artistCount);
     };
 
     getArtistsImage = async (uri: string, value: any) => {
@@ -95,10 +95,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
         });
 
         let names = response.data.name;
-        console.log("1st call", value);
-        console.log("2nd call", names);
-        console.log("Thank you, next");
-        // console.log("Names", names);
 
         Object.keys(this.state.artistCount).forEach((value: any, index: number) => {
             if (value === names) {
@@ -108,17 +104,21 @@ export default class MainScreen extends Component<mainProps, mainState> {
             }
         });
 
-        console.log(this.state.artistCount);
+        this.setState({
+            showCard: true
+        });
+
+        // console.log(this.state.artistCount);
     };
 
     render() {
         return (
             <>
                 <div
-                    className="d-flex align-items-center justify-content-center"
+                    className="d-flex align-items-center justify-content-center flex-column"
                     style={{ height: "100vh" }}
                 >
-                    <div className="borderMain text-center rounded border-success mb-5 ">
+                    <div className="borderMain text-center rounded border-success mb-5">
                         <div style={{ marginTop: "8.5%" }}>
                             <div className="mt-4 h5">Spotify Statistics</div>
                             <p>
@@ -145,8 +145,10 @@ export default class MainScreen extends Component<mainProps, mainState> {
                             )}
                         </div>
                     </div>
+                    <div className="align-self-end overflow-auto">
+                        {this.state.showCard && <ArtistCard artist={this.state.artistCount} />}
+                    </div>
                 </div>
-                <ArtistCard artist={this.state.artistCount} />
             </>
         );
     }

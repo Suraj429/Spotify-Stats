@@ -3,7 +3,8 @@ export {}
 export interface mainState {
     hrefLink: string,
     token: string,
-    artistCount: any
+    artistCount: any,
+    showCard: boolean
 }
 
 export interface mainProps{
