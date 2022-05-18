@@ -13,8 +13,6 @@ export default class ArtistCard extends Component<artistCardProp, artistCardStat
 
     render() {
         let totalArtist = this.state.storeArtist.length;
-        console.log(totalArtist);
-        //TODO: Update the lenght below
         return (
             <Row xs={1} md={6} className="g-4 px-5">
                 {Array.from({ length: totalArtist }).map((_, idx) => (
