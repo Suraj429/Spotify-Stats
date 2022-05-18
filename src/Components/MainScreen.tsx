@@ -5,6 +5,7 @@ import { mainProps, mainState } from "./Interface";
 import axios from "axios";
 import "../index.css";
 import ArtistCard from "./ArtistCard";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export default class MainScreen extends Component<mainProps, mainState> {
     constructor(props: mainProps) {
@@ -111,6 +112,12 @@ export default class MainScreen extends Component<mainProps, mainState> {
         // console.log(this.state.artistCount);
     };
 
+    goBack = () => {
+        this.setState({
+            showCard: false
+        });
+    };
+
     render() {
         return (
             <>
@@ -118,36 +125,52 @@ export default class MainScreen extends Component<mainProps, mainState> {
                     className="d-flex align-items-center justify-content-center flex-column"
                     style={{ height: "100vh" }}
                 >
-                    <div className="borderMain text-center rounded border-success mb-5">
-                        <div style={{ marginTop: "8.5%" }}>
-                            <div className="mt-4 h5">Spotify Statistics</div>
-                            <p>
-                                <small className="text-muted">
-                                    Please login with your Spotify account to see the statistics
-                                </small>
-                            </p>
+                    {!this.state.showCard && (
+                        <div className="borderMain text-center rounded border-success mb-5">
+                            <div style={{ marginTop: "8.5%" }}>
+                                <div className="mt-4 h5">Spotify Statistics</div>
+                                <p>
+                                    <small className="text-muted">
+                                        Please login with your Spotify account to see the statistics
+                                    </small>
+                                </p>
 
-                            {!this.state.token ? (
-                                <Button
-                                    variant="success"
-                                    className="mt-4"
-                                    href={this.state.hrefLink}
-                                >
-                                    Login with Spotify
-                                </Button>
-                            ) : (
-                                <div className="d-flex flex-column justify-content-center align-items-center mt-1">
-                                    <Button onClick={this.showArtists}>Show Artists</Button>
-                                    <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
-                                        Log out
+                                {!this.state.token ? (
+                                    <Button
+                                        variant="success"
+                                        className="mt-4"
+                                        href={this.state.hrefLink}
+                                    >
+                                        Login with Spotify
                                     </Button>
-                                </div>
-                            )}
+                                ) : (
+                                    <div className="d-flex flex-column justify-content-center align-items-center mt-1">
+                                        <Button onClick={this.showArtists}>Show Artists</Button>
+                                        <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
+                                            Log out
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                    <div className="align-self-end overflow-auto">
-                        {this.state.showCard && <ArtistCard artist={this.state.artistCount} />}
-                    </div>
+                    )}
+                    {this.state.showCard && (
+                        <>
+                            <Button
+                                variant="light"
+                                className="ml-2 mt-3 mb-3 align-self-start"
+                                onClick={this.goBack}
+                            >
+                                <ArrowBackIcon />
+                                Go back
+                            </Button>
+                            <div className="align-self-end overflow-auto">
+                                {this.state.showCard && (
+                                    <ArtistCard artist={this.state.artistCount} />
+                                )}
+                            </div>
+                        </>
+                    )}
                 </div>
             </>
         );
