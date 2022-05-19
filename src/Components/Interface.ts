@@ -18,3 +18,11 @@ export interface artistCardProp{
 export interface artistCardState{
     storeArtist: any
 }
+
+export interface tabsNavigationProps{
+    artist: any
+}
+
+export interface tabsNavigationState{
+
+}

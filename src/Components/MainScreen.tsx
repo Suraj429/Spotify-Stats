@@ -6,6 +6,8 @@ import axios from "axios";
 import "../index.css";
 import ArtistCard from "./ArtistCard";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Tabs from "./TabsNavigation";
+import TabsNavigation from "./TabsNavigation";
 
 export default class MainScreen extends Component<mainProps, mainState> {
     constructor(props: mainProps) {
@@ -121,6 +123,28 @@ export default class MainScreen extends Component<mainProps, mainState> {
     render() {
         return (
             <>
+                {this.state.showCard && (
+                    <div className="d-flex flex-column overflow-auto">
+                        <Button
+                            variant="light"
+                            className="ml-2 mt-3 mb-3 align-self-start"
+                            onClick={this.goBack}
+                        >
+                            <ArrowBackIcon />
+                            Go back
+                        </Button>
+                        <div className="mb-3">
+                            <div
+                                className="justify-content-center"
+                                style={{
+                                    width: "70%"
+                                }}
+                            >
+                                <TabsNavigation artist={this.state.artistCount} />
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <div
                     className="d-flex align-items-center justify-content-center flex-column"
                     style={{ height: "100vh" }}
@@ -153,23 +177,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
                                 )}
                             </div>
                         </div>
-                    )}
-                    {this.state.showCard && (
-                        <>
-                            <Button
-                                variant="light"
-                                className="ml-2 mt-3 mb-3 align-self-start"
-                                onClick={this.goBack}
-                            >
-                                <ArrowBackIcon />
-                                Go back
-                            </Button>
-                            <div className="align-self-end overflow-auto">
-                                {this.state.showCard && (
-                                    <ArtistCard artist={this.state.artistCount} />
-                                )}
-                            </div>
-                        </>
                     )}
                 </div>
             </>
