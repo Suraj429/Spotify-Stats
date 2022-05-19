@@ -124,32 +124,28 @@ export default class MainScreen extends Component<mainProps, mainState> {
         return (
             <>
                 {this.state.showCard && (
-                    <div className="d-flex flex-column overflow-auto">
+                    <div className="d-flex flex-column">
                         <Button
                             variant="light"
                             className="ml-2 mt-3 mb-3 align-self-start"
                             onClick={this.goBack}
+                            style={{
+                                position: "sticky"
+                            }}
                         >
                             <ArrowBackIcon />
                             Go back
                         </Button>
-                        <div className="mb-3">
-                            <div
-                                className="justify-content-center"
-                                style={{
-                                    width: "70%"
-                                }}
-                            >
-                                <TabsNavigation artist={this.state.artistCount} />
-                            </div>
+                        <div className="mb-3 mx-5 overflow-auto">
+                            <TabsNavigation artist={this.state.artistCount} />
                         </div>
                     </div>
                 )}
-                <div
-                    className="d-flex align-items-center justify-content-center flex-column"
-                    style={{ height: "100vh" }}
-                >
-                    {!this.state.showCard && (
+                {!this.state.showCard && (
+                    <div
+                        className="d-flex align-items-center justify-content-center flex-column"
+                        style={{ height: "100vh" }}
+                    >
                         <div className="borderMain text-center rounded border-success mb-5">
                             <div style={{ marginTop: "8.5%" }}>
                                 <div className="mt-4 h5">Spotify Statistics</div>
@@ -177,8 +173,8 @@ export default class MainScreen extends Component<mainProps, mainState> {
                                 )}
                             </div>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </>
         );
     }
