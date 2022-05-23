@@ -4,7 +4,8 @@ export interface mainState {
     hrefLink: string,
     token: string,
     artistCount: any,
-    showCard: boolean
+    showCard: boolean,
+    userID: string
 }
 
 export interface mainProps{

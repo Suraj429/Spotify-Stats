@@ -16,7 +16,8 @@ export default class MainScreen extends Component<mainProps, mainState> {
             hrefLink: `${Ids.AUTH_ENDPOINT}?client_id=${Ids.CLIENT_ID}&redirect_uri=${Ids.REDIRECT_URL}&response_type=${Ids.RESPONSE_TYPE}`,
             token: "",
             artistCount: {},
-            showCard: false
+            showCard: false,
+            userID: ""
         };
     }
 
@@ -34,7 +35,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
             window.location.hash = "";
             window.localStorage.setItem("token", getToken);
         }
-
         this.setState({
             token: getToken
         });
@@ -47,8 +47,44 @@ export default class MainScreen extends Component<mainProps, mainState> {
         window.localStorage.clear();
     };
 
-    showArtists = async () => {
-        const playlistId = Ids.PLAYLIST_ID; //personal playlist id!
+    getAllPlaylistID = async () => {
+        const url = "https://api.spotify.com/v1/me/playlists";
+
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${this.state.token}`
+                }
+            });
+            let items = response.data.items;
+            // console.log(items);
+
+            let promises: any = [];
+
+            for (let i = 0; i < 2; i++) {
+                // console.log(items[i].id);
+                promises.push(this.showArtists(items[i].id));
+            }
+
+            await Promise.all(promises);
+
+            console.log("Promise over");
+
+            this.setState({
+                showCard: true
+            });
+
+            // items.map(async (value: any) => {
+            //     await this.showArtists(value.id);
+            // });
+        } catch (err) {
+            console.log(err);
+            alert("Session expired! Plese logout and login again getAllPlaylistIDs");
+        }
+    };
+
+    showArtists = async (id: any) => {
+        const playlistId = id;
         const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
 
         try {
@@ -79,9 +115,17 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 });
             });
 
-            Object.keys(this.state.artistCount).map((value: any) => {
-                this.getArtistsImage(this.state.artistCount[value][1], value);
+            console.log(Object.keys(this.state.artistCount).length, this.state.artistCount);
+
+            let promises: any = [];
+
+            Object.keys(this.state.artistCount).map(async (value: any) => {
+                if (value !== "ARIANNE") {
+                    // await this.getArtistsImage(this.state.artistCount[value][1], value);
+                    promises.push(this.getArtistsImage(this.state.artistCount[value][1], value));
+                }
             });
+            await Promise.all(promises);
         } catch (err) {
             console.log("err", err);
             alert("Session expired! Plese logout and login again");
@@ -105,10 +149,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 let image = response.data.images;
                 arr[1] = image[1].url;
             }
-        });
-
-        this.setState({
-            showCard: true
         });
 
         // console.log(this.state.artistCount);
@@ -165,7 +205,9 @@ export default class MainScreen extends Component<mainProps, mainState> {
                                     </Button>
                                 ) : (
                                     <div className="d-flex flex-column justify-content-center align-items-center mt-1">
-                                        <Button onClick={this.showArtists}>Show Artists</Button>
+                                        <Button onClick={this.getAllPlaylistID}>
+                                            Show Artists
+                                        </Button>
                                         <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
                                             Log out
                                         </Button>
