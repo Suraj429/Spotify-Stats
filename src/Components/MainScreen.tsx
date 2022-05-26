@@ -9,6 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Tabs from "./TabsNavigation";
 import TabsNavigation from "./TabsNavigation";
 
+let success = true;
 export default class MainScreen extends Component<mainProps, mainState> {
     constructor(props: mainProps) {
         super(props);
@@ -57,22 +58,26 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 }
             });
             let items = response.data.items;
-            // console.log(items);
+
+            let artist: any = {};
 
             let promises: any = [];
 
-            for (let i = 0; i < 2; i++) {
-                // console.log(items[i].id);
-                promises.push(this.showArtists(items[i].id));
+            for (let i = 0; i < items.length; i++) {
+                await this.showArtists(items[i].id, artist);
             }
 
-            await Promise.all(promises);
-
-            console.log("Promise over");
+            // await Promise.all(promises);
 
             this.setState({
-                showCard: true
+                artistCount: artist
             });
+
+            if (success) {
+                this.setState({
+                    showCard: true
+                });
+            }
 
             // items.map(async (value: any) => {
             //     await this.showArtists(value.id);
@@ -83,7 +88,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
         }
     };
 
-    showArtists = async (id: any) => {
+    showArtists = async (id: any, artist: any) => {
         const playlistId = id;
         const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
 
@@ -97,61 +102,81 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 }
             });
 
-            const value = response.data.items;
+            const value = await response.data.items;
 
             Object.keys(value).forEach((val: string) => {
                 // this.getArtistByName(value[val]);
                 let aritstName = value[val].track.artists;
                 aritstName.map((names: any) => {
                     let uri = names.uri.split(":")[2];
-                    if (names.name in this.state.artistCount) {
-                        this.state.artistCount[names.name][0] += 1;
-                        this.state.artistCount[names.name][1] = uri;
+                    if (names.name in artist) {
+                        // this.state.artistCount[names.name][0] += 1;
+                        // this.state.artistCount[names.name][1] = uri;
+
+                        artist[names.name][0] += 1;
+                        artist[names.name][1] = uri;
                     } else {
-                        this.state.artistCount[names.name] = [];
-                        this.state.artistCount[names.name][0] = 1;
-                        this.state.artistCount[names.name][1] = uri;
+                        // this.state.artistCount[names.name] = [];
+                        // this.state.artistCount[names.name][0] = 1;
+                        // this.state.artistCount[names.name][1] = uri;
+
+                        artist[names.name] = [];
+                        artist[names.name][0] = 1;
+                        artist[names.name][1] = uri;
                     }
                 });
             });
 
-            console.log(Object.keys(this.state.artistCount).length, this.state.artistCount);
-
             let promises: any = [];
-
-            Object.keys(this.state.artistCount).map(async (value: any) => {
-                if (value !== "ARIANNE") {
+            let counter = 0;
+            // console.log(artist);
+            Object.keys(artist).map(async (value: any) => {
+                counter++;
+                if (value !== "ARIANNE" && success) {
                     // await this.getArtistsImage(this.state.artistCount[value][1], value);
-                    promises.push(this.getArtistsImage(this.state.artistCount[value][1], value));
+                    // promises.push(this.getArtistsImage(this.state.artistCount[value][1], value));
+                    // console.log("In artist map", artist[value][1], value);
+                    if (artist[value][1] && !artist[value][1].startsWith("https")) {
+                        await promises.push(this.getArtistsImage(artist[value][1], value, artist));
+                    }
                 }
             });
             await Promise.all(promises);
+
+            console.log("Promise done", artist);
+
+            success = true;
         } catch (err) {
             console.log("err", err);
+            success = false;
+            console.log(success);
+
             alert("Session expired! Plese logout and login again");
         }
     };
 
-    getArtistsImage = async (uri: string, value: any) => {
-        const url = `https://api.spotify.com/v1/artists/${uri}`;
+    getArtistsImage = async (uri: string, value: any, artist: any) => {
+        console.log(uri);
+        if (success) {
+            const url = `https://api.spotify.com/v1/artists/${uri}`;
 
-        const response: any = await axios.get(url, {
-            headers: {
-                Authorization: `Bearer ${this.state.token}`
-            }
-        });
+            const response: any = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${this.state.token}`
+                }
+            });
 
-        let names = response.data.name;
-
-        Object.keys(this.state.artistCount).forEach((value: any, index: number) => {
-            if (value === names) {
-                let arr = this.state.artistCount[value];
-                let image = response.data.images;
-                arr[1] = image[1].url;
-            }
-        });
-
-        // console.log(this.state.artistCount);
+            let names = response.data.name;
+            // console.log(value, names, artist);
+            Object.keys(artist).forEach((value: any, index: number) => {
+                if (value === names) {
+                    let arr = artist[value];
+                    let image = response.data?.images;
+                    arr[1] = image[1]?.url;
+                    // console.log("what image is getting set", value, arr[1]);
+                }
+            });
+        }
     };
 
     goBack = () => {
