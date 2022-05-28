@@ -211,7 +211,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                         className="d-flex align-items-center justify-content-center flex-column"
                         style={{ height: "100vh" }}
                     >
-                        <div className="borderMain text-center rounded border-success mb-5">
+                        <div className="borderMain text-center shadow-lg rounded border-success mb-5">
                             <div style={{ marginTop: "8.5%" }}>
                                 <div className="mt-4 h5">Spotify Statistics</div>
                                 <p>
