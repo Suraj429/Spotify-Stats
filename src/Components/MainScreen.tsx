@@ -69,8 +69,22 @@ export default class MainScreen extends Component<mainProps, mainState> {
 
             // await Promise.all(promises);
 
+            console.log(artist);
+
+            let sort = Object.keys(artist).sort((a, b) => {
+                if (artist[a][0] < artist[b][0]) return 1;
+                else if (artist[a][0] > artist[b][0]) return -1;
+                else return 0;
+            });
+
+            let sortedArtist: any = {};
+
+            sort.map((x) => {
+                sortedArtist[x] = artist[x];
+            });
+
             this.setState({
-                artistCount: artist
+                artistCount: sortedArtist
             });
 
             if (success) {
@@ -87,6 +101,13 @@ export default class MainScreen extends Component<mainProps, mainState> {
             alert("Session expired! Plese logout and login again getAllPlaylistIDs");
         }
     };
+
+    // compare = (a: any, b: any, obj: any) => {
+    //     console.log("in sort", obj[a], b)
+    //     if(obj[a][0] < obj[b][0]) return 1;
+    //     else if(obj[a][0] > obj[b][0]) return -1;
+    //     else return 0;
+    // }
 
     showArtists = async (id: any, artist: any) => {
         const playlistId = id;
@@ -246,3 +267,20 @@ export default class MainScreen extends Component<mainProps, mainState> {
         );
     }
 }
+
+// let obj = [
+//     {a : [12, 1]},
+//     {b : [10, 2]},
+// ]
+
+// compare = (a, b) => {
+//     if(Object.values(a)[0] >Object.values(b)[0]) return 1;
+//     else if(Object.values(a)[0] < Object.values(b)[0]) return -1;
+//     else return 0;
+// }
+
+// console.log(Object.values(obj[0]))
+
+// obj.sort(compare)
+
+// console.log(obj)

@@ -25,7 +25,7 @@ export default class ArtistCard extends Component<artistCardProp, artistCardStat
                             <Card.Body>
                                 <Card.Title>{this.state.storeArtist[idx]}</Card.Title>
                                 <Card.Text>
-                                    In the album{" "}
+                                    In your playlists{" "}
                                     <strong>
                                         {this.props.artist[this.state.storeArtist[idx]][0]}{" "}
                                     </strong>{" "}
