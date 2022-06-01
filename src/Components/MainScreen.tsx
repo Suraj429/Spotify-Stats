@@ -67,8 +67,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 await this.showArtists(items[i].id, artist);
             }
 
-            // await Promise.all(promises);
-
             console.log(artist);
 
             let sort = Object.keys(artist).sort((a, b) => {
@@ -92,22 +90,11 @@ export default class MainScreen extends Component<mainProps, mainState> {
                     showCard: true
                 });
             }
-
-            // items.map(async (value: any) => {
-            //     await this.showArtists(value.id);
-            // });
         } catch (err) {
             console.log(err);
             alert("Session expired! Plese logout and login again getAllPlaylistIDs");
         }
     };
-
-    // compare = (a: any, b: any, obj: any) => {
-    //     console.log("in sort", obj[a], b)
-    //     if(obj[a][0] < obj[b][0]) return 1;
-    //     else if(obj[a][0] > obj[b][0]) return -1;
-    //     else return 0;
-    // }
 
     showArtists = async (id: any, artist: any) => {
         const playlistId = id;
@@ -131,16 +118,9 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 aritstName.map((names: any) => {
                     let uri = names.uri.split(":")[2];
                     if (names.name in artist) {
-                        // this.state.artistCount[names.name][0] += 1;
-                        // this.state.artistCount[names.name][1] = uri;
-
                         artist[names.name][0] += 1;
                         artist[names.name][1] = uri;
                     } else {
-                        // this.state.artistCount[names.name] = [];
-                        // this.state.artistCount[names.name][0] = 1;
-                        // this.state.artistCount[names.name][1] = uri;
-
                         artist[names.name] = [];
                         artist[names.name][0] = 1;
                         artist[names.name][1] = uri;
@@ -150,13 +130,9 @@ export default class MainScreen extends Component<mainProps, mainState> {
 
             let promises: any = [];
             let counter = 0;
-            // console.log(artist);
             Object.keys(artist).map(async (value: any) => {
                 counter++;
                 if (value !== "ARIANNE" && success) {
-                    // await this.getArtistsImage(this.state.artistCount[value][1], value);
-                    // promises.push(this.getArtistsImage(this.state.artistCount[value][1], value));
-                    // console.log("In artist map", artist[value][1], value);
                     if (artist[value][1] && !artist[value][1].startsWith("https")) {
                         await promises.push(this.getArtistsImage(artist[value][1], value, artist));
                     }
@@ -267,20 +243,3 @@ export default class MainScreen extends Component<mainProps, mainState> {
         );
     }
 }
-
-// let obj = [
-//     {a : [12, 1]},
-//     {b : [10, 2]},
-// ]
-
-// compare = (a, b) => {
-//     if(Object.values(a)[0] >Object.values(b)[0]) return 1;
-//     else if(Object.values(a)[0] < Object.values(b)[0]) return -1;
-//     else return 0;
-// }
-
-// console.log(Object.values(obj[0]))
-
-// obj.sort(compare)
-
-// console.log(obj)
