@@ -64,10 +64,8 @@ export default class MainScreen extends Component<mainProps, mainState> {
             let promises: any = [];
 
             for (let i = 0; i < items.length; i++) {
-                await this.showArtists(items[i].id, artist);
+                await this.getTracks(items[i].id, artist);
             }
-
-            console.log(artist);
 
             let sort = Object.keys(artist).sort((a, b) => {
                 if (artist[a][0] < artist[b][0]) return 1;
@@ -96,51 +94,81 @@ export default class MainScreen extends Component<mainProps, mainState> {
         }
     };
 
-    showArtists = async (id: any, artist: any) => {
+    getTracks = async (id: any, artist: any) => {
         const playlistId = id;
         const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
 
         try {
-            const response = await axios.get(url, {
+            let response = await axios.get(url, {
                 headers: {
                     Authorization: `Bearer ${this.state.token}`
                 },
                 params: {
-                    fields: "items(track(name, artists(name, uri)))"
+                    fields: "total"
                 }
             });
 
-            const value = await response.data.items;
+            console.log("Total tracks", response.data.total);
 
-            Object.keys(value).forEach((val: string) => {
-                // this.getArtistByName(value[val]);
-                let aritstName = value[val].track.artists;
-                aritstName.map((names: any) => {
-                    let uri = names.uri.split(":")[2];
-                    if (names.name in artist) {
-                        artist[names.name][0] += 1;
-                        artist[names.name][1] = uri;
-                    } else {
-                        artist[names.name] = [];
-                        artist[names.name][0] = 1;
-                        artist[names.name][1] = uri;
+            let totalTracks = await response.data.total;
+
+            let trackLoop = Math.floor((totalTracks + 100 - 1) / 100);
+
+            console.log({ trackLoop });
+
+            let offset = 0,
+                upper = 100;
+
+            // 220, o = 0, u = 100 | o = 100, u = 200 | u = 200, u = 300
+
+            let tracked = 0;
+
+            while (trackLoop--) {
+                response = await axios.get(url, {
+                    headers: {
+                        Authorization: `Bearer ${this.state.token}`
+                    },
+                    params: {
+                        fields: "items(track(name, artists(name, uri)))",
+                        offset: offset,
+                        limit: upper
                     }
                 });
-            });
 
-            let promises: any = [];
-            let counter = 0;
-            Object.keys(artist).map(async (value: any) => {
-                counter++;
-                if (value !== "ARIANNE" && success) {
-                    if (artist[value][1] && !artist[value][1].startsWith("https")) {
-                        await promises.push(this.getArtistsImage(artist[value][1], value, artist));
+                const value = await response.data.items;
+
+                Object.keys(value).forEach((val: string) => {
+                    // this.getArtistByName(value[val]);
+                    let aritstName = value[val].track.artists;
+                    aritstName.map((names: any) => {
+                        let uri = names.uri.split(":")[2];
+                        if (names.name in artist) {
+                            artist[names.name][0] += 1;
+                            artist[names.name][1] = uri;
+                        } else {
+                            artist[names.name] = [];
+                            artist[names.name][0] = 1;
+                            artist[names.name][1] = uri;
+                        }
+                    });
+                });
+
+                let promises: any = [];
+                let counter = 0;
+                Object.keys(artist).map(async (value: any) => {
+                    counter++;
+                    if (value !== "ARIANNE" && success) {
+                        if (artist[value][1] && !artist[value][1].startsWith("https")) {
+                            await promises.push(
+                                this.getArtistsImage(artist[value][1], value, artist)
+                            );
+                        }
                     }
-                }
-            });
-            await Promise.all(promises);
+                });
 
-            console.log("Promise done", artist);
+                await Promise.all(promises);
+                offset += upper;
+            }
 
             success = true;
         } catch (err) {
@@ -153,7 +181,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
     };
 
     getArtistsImage = async (uri: string, value: any, artist: any) => {
-        console.log(uri);
         if (success) {
             const url = `https://api.spotify.com/v1/artists/${uri}`;
 
@@ -164,13 +191,11 @@ export default class MainScreen extends Component<mainProps, mainState> {
             });
 
             let names = response.data.name;
-            // console.log(value, names, artist);
             Object.keys(artist).forEach((value: any, index: number) => {
                 if (value === names) {
                     let arr = artist[value];
                     let image = response.data?.images;
                     arr[1] = image[1]?.url;
-                    // console.log("what image is getting set", value, arr[1]);
                 }
             });
         }
