@@ -8,6 +8,7 @@ import ArtistCard from "./ArtistCard";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Tabs from "./TabsNavigation";
 import TabsNavigation from "./TabsNavigation";
+import NavBar from "./NavBar";
 
 let success = true;
 export default class MainScreen extends Component<mainProps, mainState> {
@@ -210,6 +211,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
     render() {
         return (
             <>
+                <NavBar />
                 {this.state.showCard && (
                     <div className="d-flex flex-column">
                         <Button
@@ -231,7 +233,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 {!this.state.showCard && (
                     <div
                         className="d-flex align-items-center justify-content-center flex-column"
-                        style={{ height: "100vh" }}
+                        style={{ height: "100vh", backgroundColor: "rgb(227 227 227)" }}
                     >
                         <div className="borderMain text-center shadow-lg rounded border-success mb-5">
                             <div style={{ marginTop: "8.5%" }}>
