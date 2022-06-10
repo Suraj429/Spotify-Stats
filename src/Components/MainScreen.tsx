@@ -233,15 +233,23 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 {!this.state.showCard && (
                     <div
                         className="d-flex align-items-center justify-content-center flex-column"
-                        style={{ height: "100vh", backgroundColor: "rgb(227 227 227)" }}
+                        style={{ height: "90vh", backgroundColor: "rgb(227 227 227)" }}
                     >
                         <div className="borderMain text-center shadow-lg rounded border-success mb-5">
                             <div style={{ marginTop: "8.5%" }}>
-                                <div className="mt-4 h5">Spotify Statistics</div>
+                                <div className="mt-4 h5">Spotify Stats</div>
                                 <p>
-                                    <small className="text-muted">
-                                        Please login with your Spotify account to see the statistics
-                                    </small>
+                                    {this.state.showCard ? (
+                                        <small className="text-muted">
+                                            Please login with your Spotify account to see the
+                                            statistics
+                                        </small>
+                                    ) : (
+                                        <small className="text-muted">
+                                            {" "}
+                                            Select any of the option below{" "}
+                                        </small>
+                                    )}
                                 </p>
 
                                 {!this.state.token ? (
@@ -255,7 +263,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                                 ) : (
                                     <div className="d-flex flex-column justify-content-center align-items-center mt-1">
                                         <Button onClick={this.getAllPlaylistID}>
-                                            Show Artists
+                                            Top artists based on playlist
                                         </Button>
                                         <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
                                             Log out
