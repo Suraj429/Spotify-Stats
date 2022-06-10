@@ -5,13 +5,6 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import spotifyLogo from "../Constants/download.png";
 
-/*
- <a className="navbar-brand" href="#">
-                        <img src={spotifyLogo} width="30" height="30" alt="" />
-                    </a>
-
-*/
-
 export default class NavBar extends Component {
     render() {
         return (
