@@ -43,6 +43,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
     };
 
     logout = () => {
+        console.log("Test");
         this.setState({
             token: ""
         });
@@ -211,7 +212,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
     render() {
         return (
             <>
-                <NavBar />
+                <NavBar logout={this.logout} />
                 {this.state.showCard && (
                     <div className="d-flex flex-column">
                         <Button

@@ -27,3 +27,11 @@ export interface tabsNavigationProps{
 export interface tabsNavigationState{
 
 }
+
+export interface navBarProps{
+    logout: any
+}
+
+export interface navBarState{
+
+}

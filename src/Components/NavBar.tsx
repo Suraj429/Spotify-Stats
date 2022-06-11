@@ -4,18 +4,13 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import spotifyLogo from "../Constants/download.png";
+import { navBarProps, navBarState } from "./Interface";
 
-export default class NavBar extends Component {
+export default class NavBar extends Component<navBarProps, navBarState> {
     render() {
         return (
             <div>
-                <Navbar
-                    bg="light"
-                    expand="lg"
-                    style={{
-                        marginRight: "4%"
-                    }}
-                >
+                <Navbar bg="light" expand="lg" className="border-top border-bottom ">
                     <Container>
                         <a className="navbar-brand" href="#">
                             <img src={spotifyLogo} width="30" height="30" alt="" />
@@ -30,10 +25,21 @@ export default class NavBar extends Component {
                                         Based On Playlist
                                     </NavDropdown.Item>
                                     <NavDropdown.Item href="#action/3.2">
-                                        Based on Play Time
+                                        Based On Play Time
                                     </NavDropdown.Item>
                                 </NavDropdown>
                                 <Nav.Link href="#link">Link</Nav.Link>
+                                <NavDropdown
+                                    title="Account"
+                                    id="basic-nav-dropdown"
+                                    style={{
+                                        marginLeft: "51rem"
+                                    }}
+                                >
+                                    <NavDropdown.Item onClick={this.props.logout}>
+                                        Logout
+                                    </NavDropdown.Item>
+                                </NavDropdown>
                             </Nav>
                         </Navbar.Collapse>
                     </Container>
