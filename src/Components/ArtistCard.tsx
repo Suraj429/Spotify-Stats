@@ -7,7 +7,6 @@ export default class ArtistCard extends Component<artistCardProp, artistCardStat
         super(props);
         this.state = {
             storeArtist: Object.keys(this.props.artist)
-            //TODO: Sort the array based on the count^
         };
     }
 
@@ -23,7 +22,12 @@ export default class ArtistCard extends Component<artistCardProp, artistCardStat
                                 src={this.props.artist[this.state.storeArtist[idx]][1]}
                             />
                             <Card.Body>
-                                <Card.Title>{this.state.storeArtist[idx]}</Card.Title>
+                                <Card.Title>
+                                    {" "}
+                                    <small>{idx + 1}</small>
+                                    {". "}
+                                    <span>{this.state.storeArtist[idx]}</span>
+                                </Card.Title>
                                 <Card.Text>
                                     In your playlists{" "}
                                     <strong>

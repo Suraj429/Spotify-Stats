@@ -101,7 +101,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
             this.setState({
                 showError: true
             });
-            alert("Session expired! Plese logout and login again getAllPlaylistIDs");
         }
     };
 
@@ -168,7 +167,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 let counter = 0;
                 Object.keys(artist).map(async (value: any) => {
                     counter++;
-                    if (value !== "ARIANNE" && success) {
+                    if (success) {
                         if (artist[value][1] && !artist[value][1].startsWith("https")) {
                             await promises.push(
                                 this.getArtistsImage(artist[value][1], value, artist)
@@ -229,7 +228,14 @@ export default class MainScreen extends Component<mainProps, mainState> {
             <>
                 <NavBar logout={this.logout} home={this.goBack} />
                 {this.state.showError && (
-                    <Alert onClose={this.closeEror} severity="error">
+                    <Alert
+                        onClose={this.closeEror}
+                        severity="error"
+                        style={{
+                            position: "absolute",
+                            width: "100%"
+                        }}
+                    >
                         Session expired - Please logout and login again
                     </Alert>
                 )}
@@ -247,7 +253,8 @@ export default class MainScreen extends Component<mainProps, mainState> {
                             Go back
                         </Button>
                         <div className="mb-3 mx-5 overflow-auto">
-                            <TabsNavigation artist={this.state.artistCount} />
+                            {/* <TabsNavigation artist={this.state.artistCount} /> */}
+                            <ArtistCard artist={this.state.artistCount} />
                         </div>
                     </div>
                 )}
