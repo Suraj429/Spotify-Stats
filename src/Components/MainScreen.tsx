@@ -9,6 +9,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Tabs from "./TabsNavigation";
 import TabsNavigation from "./TabsNavigation";
 import NavBar from "./NavBar";
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
 
 let success = true;
 export default class MainScreen extends Component<mainProps, mainState> {
@@ -19,7 +21,9 @@ export default class MainScreen extends Component<mainProps, mainState> {
             token: "",
             artistCount: {},
             showCard: false,
-            userID: ""
+            userID: "",
+            showLoader: false,
+            showError: false
         };
     }
 
@@ -51,7 +55,9 @@ export default class MainScreen extends Component<mainProps, mainState> {
 
     getAllPlaylistID = async () => {
         const url = "https://api.spotify.com/v1/me/playlists";
-
+        this.setState({
+            showLoader: true
+        });
         try {
             const response = await axios.get(url, {
                 headers: {
@@ -86,11 +92,15 @@ export default class MainScreen extends Component<mainProps, mainState> {
 
             if (success) {
                 this.setState({
+                    showLoader: false,
                     showCard: true
                 });
             }
         } catch (err) {
             console.log(err);
+            this.setState({
+                showError: true
+            });
             alert("Session expired! Plese logout and login again getAllPlaylistIDs");
         }
     };
@@ -175,9 +185,9 @@ export default class MainScreen extends Component<mainProps, mainState> {
         } catch (err) {
             console.log("err", err);
             success = false;
-            console.log(success);
-
-            alert("Session expired! Plese logout and login again");
+            this.setState({
+                showError: true
+            });
         }
     };
 
@@ -208,10 +218,21 @@ export default class MainScreen extends Component<mainProps, mainState> {
         });
     };
 
+    closeEror = () => {
+        this.setState({
+            showError: true
+        });
+    };
+
     render() {
         return (
             <>
-                <NavBar logout={this.logout} />
+                <NavBar logout={this.logout} home={this.goBack} />
+                {!this.state.showError && (
+                    <Alert onClose={this.closeEror} severity="error">
+                        Session expired - Please logout and login again
+                    </Alert>
+                )}
                 {this.state.showCard && (
                     <div className="d-flex flex-column">
                         <Button
@@ -235,6 +256,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                         className="d-flex align-items-center justify-content-center flex-column"
                         style={{ height: "90vh", backgroundColor: "rgb(227 227 227)" }}
                     >
+                        {this.state.showLoader && <CircularProgress />}
                         <div className="borderMain text-center shadow-lg rounded border-success mb-5">
                             <div style={{ marginTop: "8.5%" }}>
                                 <div className="mt-4 h5">Spotify Stats</div>

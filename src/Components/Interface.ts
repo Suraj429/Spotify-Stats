@@ -5,7 +5,9 @@ export interface mainState {
     token: string,
     artistCount: any,
     showCard: boolean,
-    userID: string
+    userID: string,
+    showLoader: boolean,
+    showError: boolean
 }
 
 export interface mainProps{
@@ -29,7 +31,8 @@ export interface tabsNavigationState{
 }
 
 export interface navBarProps{
-    logout: any
+    logout: any,
+    home: any
 }
 
 export interface navBarState{
