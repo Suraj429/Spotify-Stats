@@ -220,7 +220,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
 
     closeEror = () => {
         this.setState({
-            showError: true
+            showError: false
         });
     };
 
@@ -228,7 +228,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
         return (
             <>
                 <NavBar logout={this.logout} home={this.goBack} />
-                {!this.state.showError && (
+                {this.state.showError && (
                     <Alert onClose={this.closeEror} severity="error">
                         Session expired - Please logout and login again
                     </Alert>
