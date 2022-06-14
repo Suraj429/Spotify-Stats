@@ -48,7 +48,9 @@ export default class MainScreen extends Component<mainProps, mainState> {
 
     logout = () => {
         this.setState({
-            token: ""
+            showLoader: false,
+            token: "",
+            showCard: false
         });
         window.localStorage.clear();
     };
@@ -131,8 +133,6 @@ export default class MainScreen extends Component<mainProps, mainState> {
 
             // 220, o = 0, u = 100 | o = 100, u = 200 | u = 200, u = 300
 
-            let tracked = 0;
-
             while (trackLoop--) {
                 response = await axios.get(url, {
                     headers: {
@@ -145,7 +145,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                     }
                 });
 
-                const value = await response.data.items;
+                const value = response.data.items;
 
                 Object.keys(value).forEach((val: string) => {
                     // this.getArtistByName(value[val]);
@@ -170,7 +170,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                     if (success) {
                         if (artist[value][1] && !artist[value][1].startsWith("https")) {
                             await promises.push(
-                                this.getArtistsImage(artist[value][1], value, artist)
+                                await this.getArtistsImage(artist[value][1], value, artist)
                             );
                         }
                     }
@@ -208,6 +208,8 @@ export default class MainScreen extends Component<mainProps, mainState> {
                     arr[1] = image[1]?.url;
                 }
             });
+        } else {
+            console.log("Not success");
         }
     };
 

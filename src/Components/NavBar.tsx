@@ -12,10 +12,10 @@ export default class NavBar extends Component<navBarProps, navBarState> {
             <div>
                 <Navbar bg="light" expand="lg" className="border-top border-bottom ">
                     <Container>
-                        <a className="navbar-brand" href="#">
+                        <a className="navbar-brand" href="#" onClick={this.props.home}>
                             <img src={spotifyLogo} width="30" height="30" alt="" />
                         </a>
-                        <Navbar.Brand href="#home">Spotify-Stats</Navbar.Brand>
+                        <Navbar.Brand>Spotify-Stats</Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">

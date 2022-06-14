@@ -32,7 +32,7 @@ export interface tabsNavigationState{
 
 export interface navBarProps{
     logout: any,
-    home: any
+    home: any,
 }
 
 export interface navBarState{
