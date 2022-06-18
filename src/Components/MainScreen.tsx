@@ -23,7 +23,10 @@ export default class MainScreen extends Component<mainProps, mainState> {
             showCard: false,
             userID: "",
             showLoader: false,
-            showError: false
+            showError: false,
+            shortTerm: [],
+            longTerm: [],
+            mediumTerm: []
         };
     }
 
@@ -55,55 +58,30 @@ export default class MainScreen extends Component<mainProps, mainState> {
         window.localStorage.clear();
     };
 
-    getAllPlaylistID = async () => {
-        const url = "https://api.spotify.com/v1/me/playlists";
-        this.setState({
-            showLoader: true
-        });
+    topTracks = async () => {
+        let timeRange = ["short_term", "medium_term", "long_term"];
+
+        const url = "https://api.spotify.com/v1/me/top/tracks";
+
         try {
-            const response = await axios.get(url, {
+            let response = await axios.get(url, {
                 headers: {
                     Authorization: `Bearer ${this.state.token}`
+                },
+                params: {
+                    limit: 1,
+                    time_range: "short_term"
                 }
             });
-            let items = response.data.items;
 
-            let artist: any = {};
-
-            let promises: any = [];
-
-            for (let i = 0; i < items.length; i++) {
-                await this.getTracks(items[i].id, artist);
-            }
-
-            let sort = Object.keys(artist).sort((a, b) => {
-                if (artist[a][0] < artist[b][0]) return 1;
-                else if (artist[a][0] > artist[b][0]) return -1;
-                else return 0;
-            });
-
-            let sortedArtist: any = {};
-
-            sort.map((x) => {
-                sortedArtist[x] = artist[x];
-            });
-
-            this.setState({
-                artistCount: sortedArtist
-            });
-
-            if (success) {
-                this.setState({
-                    showLoader: false,
-                    showCard: true
-                });
-            }
-        } catch (err) {
-            console.log(err);
+            console.log(response);
+        } catch (error) {
+            console.log("ERROR", error);
             this.setState({
                 showError: true
             });
         }
+        timeRange.map(async (value: string) => {});
     };
 
     getTracks = async (id: any, artist: any) => {
@@ -176,7 +154,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                     }
                 });
 
-                await Promise.all(promises);
+                Promise.all(promises);
                 offset += upper;
             }
 
@@ -268,7 +246,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                         {this.state.showLoader && <CircularProgress />}
                         <div className="borderMain text-center shadow-lg rounded border-success mb-5">
                             <div style={{ marginTop: "8.5%" }}>
-                                <div className="mt-4 h5">Spotify Stats</div>
+                                <div className="mt-4 h5">Spotify-Stats</div>
                                 <p>
                                     {this.state.showCard ? (
                                         <small className="text-muted">
@@ -293,9 +271,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                                     </Button>
                                 ) : (
                                     <div className="d-flex flex-column justify-content-center align-items-center mt-1">
-                                        <Button onClick={this.getAllPlaylistID}>
-                                            Top artists based on playlist
-                                        </Button>
+                                        <Button onClick={this.topTracks}>Top artists</Button>
                                         <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
                                             Log out
                                         </Button>

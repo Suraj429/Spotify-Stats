@@ -7,7 +7,10 @@ export interface mainState {
     showCard: boolean,
     userID: string,
     showLoader: boolean,
-    showError: boolean
+    showError: boolean,
+    shortTerm: Array <any>,
+    longTerm: Array <any>,
+    mediumTerm: Array <any>
 }
 
 export interface mainProps{

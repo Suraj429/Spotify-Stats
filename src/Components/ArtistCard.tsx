@@ -12,34 +12,44 @@ export default class ArtistCard extends Component<artistCardProp, artistCardStat
 
     render() {
         let totalArtist = this.state.storeArtist.length;
+
         return (
-            <Row xs={1} md={6} className="g-4 px-5">
-                {Array.from({ length: totalArtist }).map((_, idx) => (
-                    <Col>
-                        <Card>
-                            <Card.Img
-                                variant="top"
-                                src={this.props.artist[this.state.storeArtist[idx]][1]}
-                            />
-                            <Card.Body>
-                                <Card.Title>
-                                    {" "}
-                                    <small>{idx + 1}</small>
-                                    {". "}
-                                    <span>{this.state.storeArtist[idx]}</span>
-                                </Card.Title>
-                                <Card.Text>
-                                    In your playlists{" "}
-                                    <strong>
-                                        {this.props.artist[this.state.storeArtist[idx]][0]}{" "}
-                                    </strong>{" "}
-                                    time(s)
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
+            <>
+                <button
+                    type="button"
+                    className="btn btn-danger btn-floating btn-lg"
+                    id="btn-back-to-top"
+                >
+                    <i className="fas fa-arrow-up"></i>
+                </button>
+                <Row xs={1} md={6} className="g-4 px-5">
+                    {Array.from({ length: totalArtist }).map((_, idx) => (
+                        <Col>
+                            <Card>
+                                <Card.Img
+                                    variant="top"
+                                    src={this.props.artist[this.state.storeArtist[idx]][1]}
+                                />
+                                <Card.Body>
+                                    <Card.Title>
+                                        {" "}
+                                        <small>{idx + 1}</small>
+                                        {". "}
+                                        <span>{this.state.storeArtist[idx]}</span>
+                                    </Card.Title>
+                                    <Card.Text>
+                                        In your playlists{" "}
+                                        <strong>
+                                            {this.props.artist[this.state.storeArtist[idx]][0]}{" "}
+                                        </strong>{" "}
+                                        time(s)
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            </>
         );
     }
 }
