@@ -11,13 +11,14 @@ import TabsNavigation from "./TabsNavigation";
 import NavBar from "./NavBar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
+import { AutoFixOffSharp } from "@mui/icons-material";
 
 let success = true;
 export default class MainScreen extends Component<mainProps, mainState> {
     constructor(props: mainProps) {
         super(props);
         this.state = {
-            hrefLink: `${Ids.AUTH_ENDPOINT}?client_id=${Ids.CLIENT_ID}&redirect_uri=${Ids.REDIRECT_URL}&response_type=${Ids.RESPONSE_TYPE}`,
+            hrefLink: `${Ids.AUTH_ENDPOINT}?client_id=${Ids.CLIENT_ID}&redirect_uri=${Ids.REDIRECT_URL}&response_type=${Ids.RESPONSE_TYPE}&scope=user-top-read`,
             token: "",
             artistCount: {},
             showCard: false,
@@ -61,8 +62,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
     topTracks = async () => {
         let timeRange = ["short_term", "medium_term", "long_term"];
 
-        const url = "https://api.spotify.com/v1/me/top/tracks";
-
+        const url = "	https://api.spotify.com/v1/me/top/tracks";
         try {
             let response = await axios.get(url, {
                 headers: {
@@ -81,7 +81,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 showError: true
             });
         }
-        timeRange.map(async (value: string) => {});
+        // timeRange.map(async (value: string) => {});
     };
 
     getTracks = async (id: any, artist: any) => {
