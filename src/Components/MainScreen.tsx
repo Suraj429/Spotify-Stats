@@ -60,28 +60,56 @@ export default class MainScreen extends Component<mainProps, mainState> {
     };
 
     topTracks = async () => {
+        this.setState({
+            showLoader: true
+        });
+
         let timeRange = ["short_term", "medium_term", "long_term"];
 
-        const url = "	https://api.spotify.com/v1/me/top/tracks";
-        try {
-            let response = await axios.get(url, {
-                headers: {
-                    Authorization: `Bearer ${this.state.token}`
-                },
-                params: {
-                    limit: 1,
-                    time_range: "short_term"
-                }
-            });
+        timeRange.map(async (value: string) => {
+            const url = "	https://api.spotify.com/v1/me/top/tracks";
+            try {
+                let response = await axios.get(url, {
+                    headers: {
+                        Authorization: `Bearer ${this.state.token}`
+                    },
+                    params: {
+                        limit: 50,
+                        time_range: value
+                    }
+                });
 
-            console.log(response);
-        } catch (error) {
-            console.log("ERROR", error);
-            this.setState({
-                showError: true
-            });
-        }
-        // timeRange.map(async (value: string) => {});
+                response.data.items.map((items: any) => {
+                    let tempObj = {
+                        artistName: "",
+                        songName: "",
+                        image: ""
+                    };
+
+                    tempObj.artistName = items.artists[0].name;
+                    tempObj.songName = items.name;
+                    tempObj.image = items.album.images[0].url;
+
+                    value === "short_term"
+                        ? this.state.shortTerm.push(tempObj)
+                        : value === "medium_term"
+                        ? this.state.mediumTerm.push(tempObj)
+                        : this.state.longTerm.push(tempObj);
+                });
+
+                this.setState({
+                    showLoader: false
+                });
+
+                console.log(this.state.shortTerm, this.state.mediumTerm, this.state.longTerm);
+            } catch (error) {
+                console.log("ERROR", error);
+                this.setState({
+                    showError: true,
+                    showLoader: false
+                });
+            }
+        });
     };
 
     getTracks = async (id: any, artist: any) => {
