@@ -8,9 +8,13 @@ export interface mainState {
     userID: string,
     showLoader: boolean,
     showError: boolean,
-    shortTerm: Array <any>,
-    longTerm: Array <any>,
-    mediumTerm: Array <any>
+    tracksShortTerm: Array <any>,
+    tracksLongTerm: Array <any>,
+    tracksMediumTerm: Array <any>,
+    artistsShortTerm: Array <any>,
+    artistsMediumTerm: Array <any>,
+    artistsLongTerm: Array <any>,
+    artistCard: boolean
 }
 
 export interface mainProps{
@@ -26,9 +30,9 @@ export interface artistCardState{
 }
 
 export interface tabsNavigationProps{
-    mediumTerm: any,
-    longTerm: any,
-    shortTerm: any,
+    tracksMediumTerm: any,
+    tracksLongTerm: any,
+    tracksShortTerm: any,
 
 }
 
