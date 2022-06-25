@@ -8,14 +8,14 @@ export default class TabsNavigation extends Component<tabsNavigationProps, tabsN
     render() {
         return (
             <Tabs defaultActiveKey="home" id="uncontrolled-tab-example" className="mb-3">
-                <Tab eventKey="home" title="Home">
-                    <ArtistCard artist={this.props.artist} />
+                <Tab eventKey="home" title="Last 4 weeks">
+                    <ArtistCard artist={this.props.shortTerm} />
                 </Tab>
-                <Tab eventKey="profile" title="Profile">
-                    Hi
+                <Tab eventKey="profile" title="Last 6 months">
+                    <ArtistCard artist={this.props.mediumTerm} />
                 </Tab>
-                <Tab eventKey="contact" title="Contact" disabled>
-                    Hello
+                <Tab eventKey="contact" title="All time">
+                    <ArtistCard artist={this.props.longTerm} />
                 </Tab>
             </Tabs>
         );

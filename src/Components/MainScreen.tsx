@@ -98,10 +98,9 @@ export default class MainScreen extends Component<mainProps, mainState> {
                 });
 
                 this.setState({
-                    showLoader: false
+                    showLoader: false,
+                    showCard: true
                 });
-
-                console.log(this.state.shortTerm, this.state.mediumTerm, this.state.longTerm);
             } catch (error) {
                 console.log("ERROR", error);
                 this.setState({
@@ -118,7 +117,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
         });
     };
 
-    closeEror = () => {
+    closeError = () => {
         this.setState({
             showError: false
         });
@@ -127,10 +126,10 @@ export default class MainScreen extends Component<mainProps, mainState> {
     render() {
         return (
             <>
-                <NavBar logout={this.logout} home={this.goBack} />
+                <NavBar logout={this.logout} home={this.goBack} topTracks={this.topTracks} />
                 {this.state.showError && (
                     <Alert
-                        onClose={this.closeEror}
+                        onClose={this.closeError}
                         severity="error"
                         style={{
                             position: "absolute",
@@ -154,8 +153,12 @@ export default class MainScreen extends Component<mainProps, mainState> {
                             Go back
                         </Button>
                         <div className="mb-3 mx-5 overflow-auto">
-                            {/* <TabsNavigation artist={this.state.artistCount} /> */}
-                            <ArtistCard artist={this.state.artistCount} />
+                            <TabsNavigation
+                                shortTerm={this.state.shortTerm}
+                                mediumTerm={this.state.mediumTerm}
+                                longTerm={this.state.longTerm}
+                            />
+                            {/* <ArtistCard artist={this.state.artistCount} /> */}
                         </div>
                     </div>
                 )}

@@ -22,20 +22,13 @@ export default class NavBar extends Component<navBarProps, navBarState> {
                                 <Nav.Link href="#home" onClick={this.props.home}>
                                     Home
                                 </Nav.Link>
-                                <NavDropdown title="Top Artists" id="basic-nav-dropdown">
-                                    <NavDropdown.Item href="#action/3.1">
-                                        Based On Playlist
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item href="#action/3.2">
-                                        Based On Play Time
-                                    </NavDropdown.Item>
-                                </NavDropdown>
-                                <Nav.Link href="#link">Link</Nav.Link>
+                                <Nav.Link onClick={this.props.topTracks}>Top Tracks</Nav.Link>
+                                <Nav.Link>Top Artists</Nav.Link>
                                 <NavDropdown
                                     title="Account"
                                     id="basic-nav-dropdown"
                                     style={{
-                                        marginLeft: "51rem"
+                                        paddingLeft: "48rem"
                                     }}
                                 >
                                     <NavDropdown.Item onClick={this.props.logout}>
