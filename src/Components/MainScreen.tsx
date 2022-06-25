@@ -6,12 +6,10 @@ import axios from "axios";
 import "../index.css";
 import ArtistCard from "./ArtistCard";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Tabs from "./TabsNavigation";
 import TabsNavigation from "./TabsNavigation";
 import NavBar from "./NavBar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
-import { AutoFixOffSharp } from "@mui/icons-material";
 
 let success = true;
 export default class MainScreen extends Component<mainProps, mainState> {
@@ -25,9 +23,13 @@ export default class MainScreen extends Component<mainProps, mainState> {
             userID: "",
             showLoader: false,
             showError: false,
-            shortTerm: [],
-            longTerm: [],
-            mediumTerm: []
+            tracksShortTerm: [],
+            tracksLongTerm: [],
+            tracksMediumTerm: [],
+            artistsShortTerm: [],
+            artistsMediumTerm: [],
+            artistsLongTerm: [],
+            artistCard: false
         };
     }
 
@@ -59,7 +61,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
         window.localStorage.clear();
     };
 
-    topTracks = async () => {
+    topArtists = async () => {
         this.setState({
             showLoader: true
         });
@@ -67,7 +69,61 @@ export default class MainScreen extends Component<mainProps, mainState> {
         let timeRange = ["short_term", "medium_term", "long_term"];
 
         timeRange.map(async (value: string) => {
-            const url = "	https://api.spotify.com/v1/me/top/tracks";
+            const url = "https://api.spotify.com/v1/me/top/artists";
+            try {
+                let response = await axios.get(url, {
+                    headers: {
+                        Authorization: `Bearer ${this.state.token}`
+                    },
+                    params: {
+                        limit: 50,
+                        time_range: value
+                    }
+                });
+
+                response.data.items.map((items: any) => {
+                    let tempObj = {
+                        artistName: "",
+                        image: ""
+                    };
+
+                    tempObj.artistName = items.name;
+                    tempObj.image = items.images[0].url;
+
+                    value === "short_term"
+                        ? this.state.artistsShortTerm.push(tempObj)
+                        : value === "medium_term"
+                        ? this.state.artistsMediumTerm.push(tempObj)
+                        : this.state.artistsLongTerm.push(tempObj);
+                });
+
+                console.log(this.state.artistsShortTerm);
+
+                this.setState({
+                    showLoader: false,
+                    showCard: true,
+                    artistCard: true
+                });
+            } catch (error) {
+                console.log("ERROR", error);
+                this.setState({
+                    showError: true,
+                    showLoader: false
+                });
+            }
+        });
+    };
+
+    topTracks = async () => {
+        this.setState({
+            showLoader: true,
+            artistCard: false
+        });
+
+        let timeRange = ["short_term", "medium_term", "long_term"];
+
+        timeRange.map(async (value: string) => {
+            const url = "https://api.spotify.com/v1/me/top/tracks";
             try {
                 let response = await axios.get(url, {
                     headers: {
@@ -91,10 +147,10 @@ export default class MainScreen extends Component<mainProps, mainState> {
                     tempObj.image = items.album.images[0].url;
 
                     value === "short_term"
-                        ? this.state.shortTerm.push(tempObj)
+                        ? this.state.tracksShortTerm.push(tempObj)
                         : value === "medium_term"
-                        ? this.state.mediumTerm.push(tempObj)
-                        : this.state.longTerm.push(tempObj);
+                        ? this.state.tracksMediumTerm.push(tempObj)
+                        : this.state.tracksLongTerm.push(tempObj);
                 });
 
                 this.setState({
@@ -154,11 +210,22 @@ export default class MainScreen extends Component<mainProps, mainState> {
                         </Button>
                         <div className="mb-3 mx-5 overflow-auto">
                             <TabsNavigation
-                                shortTerm={this.state.shortTerm}
-                                mediumTerm={this.state.mediumTerm}
-                                longTerm={this.state.longTerm}
+                                tracksShortTerm={
+                                    !this.state.artistCard
+                                        ? this.state.tracksShortTerm
+                                        : this.state.artistsShortTerm
+                                }
+                                tracksMediumTerm={
+                                    !this.state.artistCard
+                                        ? this.state.tracksMediumTerm
+                                        : this.state.artistsMediumTerm
+                                }
+                                tracksLongTerm={
+                                    !this.state.artistCard
+                                        ? this.state.tracksLongTerm
+                                        : this.state.artistsLongTerm
+                                }
                             />
-                            {/* <ArtistCard artist={this.state.artistCount} /> */}
                         </div>
                     </div>
                 )}
@@ -194,8 +261,15 @@ export default class MainScreen extends Component<mainProps, mainState> {
                                         Login with Spotify
                                     </Button>
                                 ) : (
-                                    <div className="d-flex flex-column justify-content-center align-items-center mt-1">
-                                        <Button onClick={this.topTracks}>Top artists</Button>
+                                    <div>
+                                        <div className="d-flex justify-content-center align-items-center mt-1">
+                                            <Button onClick={this.topArtists} className="mr-1">
+                                                Top Artists
+                                            </Button>
+                                            <Button onClick={this.topTracks} className="ml-1">
+                                                Top Tracks
+                                            </Button>
+                                        </div>
                                         <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
                                             Log out
                                         </Button>
