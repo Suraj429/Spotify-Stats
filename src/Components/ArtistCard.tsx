@@ -11,35 +11,30 @@ export default class ArtistCard extends Component<artistCardProp, artistCardStat
     }
 
     render() {
-        let totalArtist = this.state.storeArtist.length;
+        console.log(this.props.artist);
+        let totalArtist = this.props.artist.length;
+
         return (
-            <Row xs={1} md={6} className="g-4 px-5">
-                {Array.from({ length: totalArtist }).map((_, idx) => (
-                    <Col>
-                        <Card>
-                            <Card.Img
-                                variant="top"
-                                src={this.props.artist[this.state.storeArtist[idx]][1]}
-                            />
-                            <Card.Body>
-                                <Card.Title>
-                                    {" "}
-                                    <small>{idx + 1}</small>
-                                    {". "}
-                                    <span>{this.state.storeArtist[idx]}</span>
-                                </Card.Title>
-                                <Card.Text>
-                                    In your playlists{" "}
-                                    <strong>
-                                        {this.props.artist[this.state.storeArtist[idx]][0]}{" "}
-                                    </strong>{" "}
-                                    time(s)
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
+            <>
+                <Row xs={1} md={6} className="g-4 px-5">
+                    {Array.from({ length: totalArtist }).map((_, idx) => (
+                        <Col>
+                            <Card>
+                                <Card.Img variant="top" src={this.props.artist[idx].image} />
+                                <Card.Body>
+                                    <Card.Title>
+                                        {" "}
+                                        <small>{idx + 1}</small>
+                                        {". "}
+                                        <span>{this.props.artist[idx].songName}</span>
+                                    </Card.Title>
+                                    <Card.Text>- {this.props.artist[idx].artistName}</Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            </>
         );
     }
 }

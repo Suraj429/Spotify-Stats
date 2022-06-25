@@ -7,7 +7,10 @@ export interface mainState {
     showCard: boolean,
     userID: string,
     showLoader: boolean,
-    showError: boolean
+    showError: boolean,
+    shortTerm: Array <any>,
+    longTerm: Array <any>,
+    mediumTerm: Array <any>
 }
 
 export interface mainProps{
@@ -23,7 +26,10 @@ export interface artistCardState{
 }
 
 export interface tabsNavigationProps{
-    artist: any
+    mediumTerm: any,
+    longTerm: any,
+    shortTerm: any,
+
 }
 
 export interface tabsNavigationState{
@@ -33,6 +39,7 @@ export interface tabsNavigationState{
 export interface navBarProps{
     logout: any,
     home: any,
+    topTracks: any
 }
 
 export interface navBarState{

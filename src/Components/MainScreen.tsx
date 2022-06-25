@@ -11,19 +11,23 @@ import TabsNavigation from "./TabsNavigation";
 import NavBar from "./NavBar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
+import { AutoFixOffSharp } from "@mui/icons-material";
 
 let success = true;
 export default class MainScreen extends Component<mainProps, mainState> {
     constructor(props: mainProps) {
         super(props);
         this.state = {
-            hrefLink: `${Ids.AUTH_ENDPOINT}?client_id=${Ids.CLIENT_ID}&redirect_uri=${Ids.REDIRECT_URL}&response_type=${Ids.RESPONSE_TYPE}`,
+            hrefLink: `${Ids.AUTH_ENDPOINT}?client_id=${Ids.CLIENT_ID}&redirect_uri=${Ids.REDIRECT_URL}&response_type=${Ids.RESPONSE_TYPE}&scope=user-top-read`,
             token: "",
             artistCount: {},
             showCard: false,
             userID: "",
             showLoader: false,
-            showError: false
+            showError: false,
+            shortTerm: [],
+            longTerm: [],
+            mediumTerm: []
         };
     }
 
@@ -55,162 +59,56 @@ export default class MainScreen extends Component<mainProps, mainState> {
         window.localStorage.clear();
     };
 
-    getAllPlaylistID = async () => {
-        const url = "https://api.spotify.com/v1/me/playlists";
+    topTracks = async () => {
         this.setState({
             showLoader: true
         });
-        try {
-            const response = await axios.get(url, {
-                headers: {
-                    Authorization: `Bearer ${this.state.token}`
-                }
-            });
-            let items = response.data.items;
 
-            let artist: any = {};
+        let timeRange = ["short_term", "medium_term", "long_term"];
 
-            let promises: any = [];
-
-            for (let i = 0; i < items.length; i++) {
-                await this.getTracks(items[i].id, artist);
-            }
-
-            let sort = Object.keys(artist).sort((a, b) => {
-                if (artist[a][0] < artist[b][0]) return 1;
-                else if (artist[a][0] > artist[b][0]) return -1;
-                else return 0;
-            });
-
-            let sortedArtist: any = {};
-
-            sort.map((x) => {
-                sortedArtist[x] = artist[x];
-            });
-
-            this.setState({
-                artistCount: sortedArtist
-            });
-
-            if (success) {
-                this.setState({
-                    showLoader: false,
-                    showCard: true
-                });
-            }
-        } catch (err) {
-            console.log(err);
-            this.setState({
-                showError: true
-            });
-        }
-    };
-
-    getTracks = async (id: any, artist: any) => {
-        const playlistId = id;
-        const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-
-        try {
-            let response = await axios.get(url, {
-                headers: {
-                    Authorization: `Bearer ${this.state.token}`
-                },
-                params: {
-                    fields: "total"
-                }
-            });
-
-            console.log("Total tracks", response.data.total);
-
-            let totalTracks = await response.data.total;
-
-            let trackLoop = Math.floor((totalTracks + 100 - 1) / 100);
-
-            console.log({ trackLoop });
-
-            let offset = 0,
-                upper = 100;
-
-            // 220, o = 0, u = 100 | o = 100, u = 200 | u = 200, u = 300
-
-            while (trackLoop--) {
-                response = await axios.get(url, {
+        timeRange.map(async (value: string) => {
+            const url = "	https://api.spotify.com/v1/me/top/tracks";
+            try {
+                let response = await axios.get(url, {
                     headers: {
                         Authorization: `Bearer ${this.state.token}`
                     },
                     params: {
-                        fields: "items(track(name, artists(name, uri)))",
-                        offset: offset,
-                        limit: upper
+                        limit: 50,
+                        time_range: value
                     }
                 });
 
-                const value = response.data.items;
+                response.data.items.map((items: any) => {
+                    let tempObj = {
+                        artistName: "",
+                        songName: "",
+                        image: ""
+                    };
 
-                Object.keys(value).forEach((val: string) => {
-                    // this.getArtistByName(value[val]);
-                    let aritstName = value[val].track.artists;
-                    aritstName.map((names: any) => {
-                        let uri = names.uri.split(":")[2];
-                        if (names.name in artist) {
-                            artist[names.name][0] += 1;
-                            artist[names.name][1] = uri;
-                        } else {
-                            artist[names.name] = [];
-                            artist[names.name][0] = 1;
-                            artist[names.name][1] = uri;
-                        }
-                    });
+                    tempObj.artistName = items.artists[0].name;
+                    tempObj.songName = items.name;
+                    tempObj.image = items.album.images[0].url;
+
+                    value === "short_term"
+                        ? this.state.shortTerm.push(tempObj)
+                        : value === "medium_term"
+                        ? this.state.mediumTerm.push(tempObj)
+                        : this.state.longTerm.push(tempObj);
                 });
 
-                let promises: any = [];
-                let counter = 0;
-                Object.keys(artist).map(async (value: any) => {
-                    counter++;
-                    if (success) {
-                        if (artist[value][1] && !artist[value][1].startsWith("https")) {
-                            await promises.push(
-                                await this.getArtistsImage(artist[value][1], value, artist)
-                            );
-                        }
-                    }
+                this.setState({
+                    showLoader: false,
+                    showCard: true
                 });
-
-                await Promise.all(promises);
-                offset += upper;
+            } catch (error) {
+                console.log("ERROR", error);
+                this.setState({
+                    showError: true,
+                    showLoader: false
+                });
             }
-
-            success = true;
-        } catch (err) {
-            console.log("err", err);
-            success = false;
-            this.setState({
-                showError: true
-            });
-        }
-    };
-
-    getArtistsImage = async (uri: string, value: any, artist: any) => {
-        if (success) {
-            const url = `https://api.spotify.com/v1/artists/${uri}`;
-
-            const response: any = await axios.get(url, {
-                headers: {
-                    Authorization: `Bearer ${this.state.token}`
-                }
-            });
-
-            let names = response.data.name;
-            Object.keys(artist).forEach((value: any, index: number) => {
-                if (value === names) {
-                    let arr = artist[value];
-                    let image = response.data?.images;
-                    arr[1] = image[1]?.url;
-                }
-            });
-        } else {
-            console.log("Not success");
-        }
+        });
     };
 
     goBack = () => {
@@ -219,7 +117,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
         });
     };
 
-    closeEror = () => {
+    closeError = () => {
         this.setState({
             showError: false
         });
@@ -228,10 +126,10 @@ export default class MainScreen extends Component<mainProps, mainState> {
     render() {
         return (
             <>
-                <NavBar logout={this.logout} home={this.goBack} />
+                <NavBar logout={this.logout} home={this.goBack} topTracks={this.topTracks} />
                 {this.state.showError && (
                     <Alert
-                        onClose={this.closeEror}
+                        onClose={this.closeError}
                         severity="error"
                         style={{
                             position: "absolute",
@@ -255,8 +153,12 @@ export default class MainScreen extends Component<mainProps, mainState> {
                             Go back
                         </Button>
                         <div className="mb-3 mx-5 overflow-auto">
-                            {/* <TabsNavigation artist={this.state.artistCount} /> */}
-                            <ArtistCard artist={this.state.artistCount} />
+                            <TabsNavigation
+                                shortTerm={this.state.shortTerm}
+                                mediumTerm={this.state.mediumTerm}
+                                longTerm={this.state.longTerm}
+                            />
+                            {/* <ArtistCard artist={this.state.artistCount} /> */}
                         </div>
                     </div>
                 )}
@@ -268,7 +170,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                         {this.state.showLoader && <CircularProgress />}
                         <div className="borderMain text-center shadow-lg rounded border-success mb-5">
                             <div style={{ marginTop: "8.5%" }}>
-                                <div className="mt-4 h5">Spotify Stats</div>
+                                <div className="mt-4 h5">Spotify-Stats</div>
                                 <p>
                                     {this.state.showCard ? (
                                         <small className="text-muted">
@@ -293,9 +195,7 @@ export default class MainScreen extends Component<mainProps, mainState> {
                                     </Button>
                                 ) : (
                                     <div className="d-flex flex-column justify-content-center align-items-center mt-1">
-                                        <Button onClick={this.getAllPlaylistID}>
-                                            Top artists based on playlist
-                                        </Button>
+                                        <Button onClick={this.topTracks}>Top artists</Button>
                                         <Button variant="danger mt-2 btn-sm" onClick={this.logout}>
                                             Log out
                                         </Button>
