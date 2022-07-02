@@ -14,7 +14,7 @@ export interface mainState {
     artistsShortTerm: Array <any>,
     artistsMediumTerm: Array <any>,
     artistsLongTerm: Array <any>,
-    artistCard: boolean
+    artistCard: boolean,
 }
 
 export interface mainProps{
@@ -43,7 +43,8 @@ export interface tabsNavigationState{
 export interface navBarProps{
     logout: any,
     home: any,
-    topTracks: any
+    topTracks: any,
+    topArtists: any
 }
 
 export interface navBarState{
