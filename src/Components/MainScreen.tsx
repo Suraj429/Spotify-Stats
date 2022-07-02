@@ -4,14 +4,11 @@ import { Ids } from "../Constants/APIData";
 import { mainProps, mainState } from "./Interface";
 import axios from "axios";
 import "../index.css";
-import ArtistCard from "./ArtistCard";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import TabsNavigation from "./TabsNavigation";
 import NavBar from "./NavBar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
-
-let success = true;
 export default class MainScreen extends Component<mainProps, mainState> {
     constructor(props: mainProps) {
         super(props);
@@ -182,7 +179,12 @@ export default class MainScreen extends Component<mainProps, mainState> {
     render() {
         return (
             <>
-                <NavBar logout={this.logout} home={this.goBack} topTracks={this.topTracks} />
+                <NavBar
+                    logout={this.logout}
+                    home={this.goBack}
+                    topTracks={this.topTracks}
+                    topArtists={this.topArtists}
+                />
                 {this.state.showError && (
                     <Alert
                         onClose={this.closeError}

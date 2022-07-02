@@ -23,7 +23,7 @@ export default class NavBar extends Component<navBarProps, navBarState> {
                                     Home
                                 </Nav.Link>
                                 <Nav.Link onClick={this.props.topTracks}>Top Tracks</Nav.Link>
-                                <Nav.Link>Top Artists</Nav.Link>
+                                <Nav.Link onClick={this.props.topArtists}> Top Artists</Nav.Link>
                                 <NavDropdown
                                     title="Account"
                                     id="basic-nav-dropdown"
