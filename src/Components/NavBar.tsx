@@ -31,12 +31,7 @@ export default class NavBar extends Component<navBarProps, navBarState> {
                                         paddingLeft: "48rem"
                                     }}
                                 >
-                                    <NavDropdown.Item
-                                        // style={{
-                                        //     marginLeft: "90%"
-                                        // }}
-                                        onClick={this.props.logout}
-                                    >
+                                    <NavDropdown.Item onClick={this.props.logout}>
                                         Logout
                                     </NavDropdown.Item>
                                 </NavDropdown>
